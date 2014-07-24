@@ -42,13 +42,14 @@ namespace CSharpBinding.OutlinePad
 	{
 		ITextEditor editor;
 		DispatcherTimer updateTreeTimer = new DispatcherTimer();
+		const double updateDelayMilliseconds = 1000;
 		DispatcherTimer scrollToNodeTimer = new DispatcherTimer();
+		const double scrollDelayMilliseconds = 200;
 		SyntaxTree syntaxTree;
 		TextLocation? lastCaretLocation;
-		CSharpOutlineNode selectedNode = null;
-		static double refreshDelayInMilliSec = 1000;
-		static bool optionSelectActiveTreeNode = true;
-		static bool optionSelectRange = false;
+		CSharpOutlineNode selectedNode = null;		
+		const bool optionSelectActiveTreeNode = true;
+		const bool optionSelectRange = false;
 		
 		public CSharpOutlineContentHost(ITextEditor editor) {
 			this.editor = editor;
@@ -58,10 +59,10 @@ namespace CSharpBinding.OutlinePad
 			
 			SD.ParserService.ParseInformationUpdated += ParseInfoUpdated;
 			
-			this.updateTreeTimer.Interval = TimeSpan.FromMilliseconds(refreshDelayInMilliSec);
+			this.updateTreeTimer.Interval = TimeSpan.FromMilliseconds(updateDelayMilliseconds);
 			this.updateTreeTimer.Tick += this.UpdateTreeTimer_Tick;
 
-			this.scrollToNodeTimer.Interval = TimeSpan.FromMilliseconds(200);
+			this.scrollToNodeTimer.Interval = TimeSpan.FromMilliseconds(scrollDelayMilliseconds);
 			this.scrollToNodeTimer.Tick += this.ScrollToNodeTimer_Tick;				
 		}		
 		
