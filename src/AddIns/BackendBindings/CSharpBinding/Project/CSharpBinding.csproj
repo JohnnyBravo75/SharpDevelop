@@ -115,6 +115,13 @@
       <DependentUpon>CSharpProjectFormattingOptions.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Src\OutlinePad\AstNodeHelper.cs" />
+    <Compile Include="Src\OutlinePad\CSharpOutlineCommands.cs" />
+    <Compile Include="Src\OutlinePad\CSharpOutlineContentHost.xaml.cs">
+      <DependentUpon>CSharpOutlineContentHost.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Src\OutlinePad\CSharpOutlineNode.cs" />
+    <Compile Include="Src\OutlinePad\ExtensionMethods.cs" />
     <Compile Include="Src\Parser\FoldingVisitor.cs" />
     <Compile Include="Src\Refactoring\AbstractInlineRefactorDialog.cs" />
     <Compile Include="Src\Refactoring\ConvertInterfaceToAbstractClassContextAction.cs" />
@@ -264,6 +271,7 @@
     <Page Include="Src\OptionPanels\CSharpFormattingEditor.xaml" />
     <Page Include="Src\OptionPanels\CSharpFormattingOptionPanel.xaml" />
     <Page Include="Src\OptionPanels\CSharpProjectFormattingOptions.xaml" />
+    <Page Include="Src\OutlinePad\CSharpOutlineContentHost.xaml" />
     <Page Include="Src\Refactoring\CreatePropertiesDialog.xaml" />
     <Page Include="Src\Refactoring\InsertCtorDialog.xaml" />
     <Page Include="Src\Refactoring\IssueOptions.xaml" />
@@ -274,6 +282,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Src\FormsDesigner" />
+    <Folder Include="Src\OutlinePad" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
