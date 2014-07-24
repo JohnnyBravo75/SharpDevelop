@@ -59,6 +59,7 @@ namespace CSharpBinding
 				editor.ContextActionProviders.AddRange(contextActionProviders);
 			}
 			
+			
 			// Create instance of options adapter and register it as service
 			var formattingPolicy = CSharpFormattingPolicies.Instance.GetProjectOptions(SD.ProjectService.FindProjectContainingFile(editor.FileName));
 			var textEditor = editor.GetService<TextEditor>();
