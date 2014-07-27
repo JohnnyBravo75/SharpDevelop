@@ -16,17 +16,18 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.IO;
+using System.Linq;
+using System.Windows;
+using System.Windows.Media;
+using System.Text;
+using ICSharpCode.NRefactory.CSharp;
+using ICSharpCode.AvalonEdit.Highlighting;
+using System.Collections.Generic;
+	
 namespace CSharpBinding.OutlinePad
 {
-	using System;
-	using System.IO;
-	using System.Linq;
-	using System.Windows;
-	using System.Windows.Media;
-	using System.Text;
-	using ICSharpCode.NRefactory.CSharp;
-	using ICSharpCode.AvalonEdit.Highlighting;
-	
 	internal static class AstNodeHelper {
 		
 		static bool showExtendedInfos = true;
@@ -114,17 +115,17 @@ namespace CSharpBinding.OutlinePad
 				|| IsOperator(node)
 			);
         }
-
+		
         public static bool IsRegionStart(AstNode node) {
             return (node is PreProcessorDirective && (node as PreProcessorDirective).Type == PreProcessorDirectiveType.Region);
         }
 
 		internal static void SetRegionStartInfos(CSharpOutlineNode node, AstNode dataNode)  {
             var preProcessorNode = (PreProcessorDirective)dataNode;
-			node.Name 			 = "****** " + preProcessorNode.Argument + " *****";
+			node.Name 			 = "*****" + preProcessorNode.Argument + "****";
 			node.ForegroundBrush = (regionHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
 //			node.Weight = regionHighLighting.FontWeight != null ? regionHighLighting.FontWeight.Value : FontWeights.Normal;          
-        }
+		}
 		
         public static bool IsRegionEnd(AstNode node) {
             return (node is PreProcessorDirective && (node as PreProcessorDirective).Type == PreProcessorDirectiveType.Endregion);
@@ -132,7 +133,7 @@ namespace CSharpBinding.OutlinePad
 
 		internal static void SetRegionEndInfos(CSharpOutlineNode node, AstNode dataNode)  {
             var preProcessorNode = (PreProcessorDirective)dataNode;
-			node.Name 			 = "*********************";			
+            node.Name 			 = "********************";
 			node.ForegroundBrush = (regionHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
 //			node.Weight = regionHighLighting.FontWeight != null ? regionHighLighting.FontWeight.Value : FontWeights.Normal;          
         }

@@ -155,13 +155,13 @@ namespace CSharpBinding.OutlinePad
 		}
 		
 		protected override void OnExpanding() {
-			var cmd =  new HandleFoldingCommand();
+			var cmd = new HandleFoldingCommand();
 			if (cmd.CanExecute(this))
 				cmd.Execute(this);
 		}
 		
 		protected override void OnCollapsing() {
-			var cmd =  new HandleFoldingCommand();
+			var cmd = new HandleFoldingCommand();
 			if (cmd.CanExecute(this))
 				cmd.Execute(this);
 		}

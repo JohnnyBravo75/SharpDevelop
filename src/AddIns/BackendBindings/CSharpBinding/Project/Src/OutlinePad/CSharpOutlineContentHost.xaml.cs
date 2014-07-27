@@ -20,7 +20,7 @@ using System;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-
+using System.Windows.Threading;
 using ICSharpCode.Core;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
@@ -29,9 +29,6 @@ using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.SharpDevelop.Gui;
 using ICSharpCode.SharpDevelop.Parser;
 using CSharpBinding.Parser;
-using System.Windows.Threading;
-using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Folding;
 
 namespace CSharpBinding.OutlinePad
 {
@@ -89,9 +86,6 @@ namespace CSharpBinding.OutlinePad
 			// prevent unnecessary looping, when both CaretLocationChanged and ParseUpdateChanged are fired.
 			if (this.lastCaretLocation.HasValue && this.lastCaretLocation == this.editor.Caret.Location)
 				return;
-			// same line, mostly in the same region, no update needed (there is a small inaccuracy, when entering a method/member)
-//			if (this.lastCaretLocation.HasValue && this.lastCaretLocation.Value.Line == this.editor.Caret.Location.Line)
-//				return;
 			
 			this.lastCaretLocation = this.editor.Caret.Location;
 			selectedNode = null;
@@ -108,9 +102,9 @@ namespace CSharpBinding.OutlinePad
 		bool IsRangeInside(TextLocation outerStartLocation, TextLocation outerEndLocation,
 						   TextLocation innerStartLocation, TextLocation innerEndLocation) {
 			if (outerStartLocation.IsEmpty || outerStartLocation.IsInfinite() ||
-				outerEndLocation.IsEmpty || outerEndLocation.IsInfinite() ||
+				outerEndLocation.IsEmpty   || outerEndLocation.IsInfinite()   ||
 				innerStartLocation.IsEmpty || innerStartLocation.IsInfinite() ||
-				innerEndLocation.IsEmpty || innerEndLocation.IsInfinite())
+				innerEndLocation.IsEmpty   || innerEndLocation.IsInfinite())
 				return false;
 			
 			const int virtualLineLength = 200;
@@ -175,19 +169,6 @@ namespace CSharpBinding.OutlinePad
 			
 			for (int i = 0; i < Math.Max(childrenCount, dataCount); i++) {
 				if (i >= childrenCount) {
-
-//					if (AstNodeHelper.IsRegionStart(dataChildren[i])) {
-//						var regionNode = new CSharpOutlineNode();
-//						SetNodeInfos(regionNode, node, dataChildren[i]);
-//						node.Children.Add(regionNode);
-//						node = regionNode;
-//						continue;
-//					}					
-//					if (AstNodeHelper.IsRegionEnd(dataChildren[i])) {
-//	                    node = node.Parent;
-//						continue;	
-//	                }
-	
 					node.Children.Add(BuildNode(node, dataChildren[i]));							
 
 				} else if (i >= dataCount) {
@@ -195,6 +176,8 @@ namespace CSharpBinding.OutlinePad
 						node.Children.RemoveAt(dataCount);
 						
 				} else {
+					// Create new node, the old node doesn´t update (seems to be a bug)
+					node.Children[i] = new CSharpOutlineNode();
 					UpdateNode(node.Children[i] as CSharpOutlineNode, dataChildren[i]);				
 				}
 			}
@@ -208,20 +191,7 @@ namespace CSharpBinding.OutlinePad
 			// Filter the children, for only the needed/wanted nodes
 			var dataChildren = dataNode.Children.Where(v => AstNodeHelper.IsAllowedNode(v)).ToList();
 			foreach (var child in dataChildren) {
-//				if (AstNodeHelper.IsRegionStart(child)) {
-//					var regionNode = new CSharpOutlineNode();
-//					SetNodeInfos(regionNode, node, child);
-//					node.Children.Add(regionNode);
-//					node = regionNode;
-//					continue;
-//				}				
-//				if (AstNodeHelper.IsRegionEnd(child)) {
-//                    node = node.Parent;
-//					continue;	
-//                }
-				
 				node.Children.Add(BuildNode(node, child));
-
 			}
 			return node;
 		}

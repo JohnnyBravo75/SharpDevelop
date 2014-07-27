@@ -16,13 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
+using ICSharpCode.SharpDevelop;
+using ICSharpCode.AvalonEdit.Folding;
+using System.Linq;
+	
 namespace CSharpBinding.OutlinePad
 {
-	using System;
-	using ICSharpCode.SharpDevelop;
-	using ICSharpCode.AvalonEdit.Folding;
-	using System.Linq;
-	
 	/// <summary>
 	/// RemoveNodeCommand.
 	/// </summary>

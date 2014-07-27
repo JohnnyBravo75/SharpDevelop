@@ -16,11 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-namespace CSharpBinding.OutlinePad
-{
-	using System;
-	using ICSharpCode.NRefactory;
+using System;
+using ICSharpCode.NRefactory;
 	
+namespace CSharpBinding.OutlinePad
+{	
 	/// <summary>
 	/// Description of TextLocationExtensions.
 	/// </summary>
