@@ -24,7 +24,6 @@ namespace CSharpBinding.OutlinePad
 	using System.Windows;
 	using System.Windows.Media;
 	using System.Text;
-
 	using ICSharpCode.NRefactory.CSharp;
 	using ICSharpCode.AvalonEdit.Highlighting;
 	
@@ -55,7 +54,9 @@ namespace CSharpBinding.OutlinePad
 			if (accessModifier == null && IsInterface(node.Parent)) {
 				return Modifiers.Public;
 			}
-			return accessModifier == null ? Modifiers.None : accessModifier.Modifier;
+			return accessModifier == null 
+						? Modifiers.None 
+						: accessModifier.Modifier;
         }
 		
 		private static string GetParameterDeclsAsString(AstNodeCollection<ParameterDeclaration> parameterDecls) {
@@ -96,21 +97,21 @@ namespace CSharpBinding.OutlinePad
 		
 		public static bool IsAllowedNode(AstNode node)  {
             return (IsRegionStart(node)
-					|| IsRegionEnd(node) 
-	                || IsClass(node)
-					|| IsInterface(node) 
-	                || IsMethod(node) 
-	                || IsField(node) 
-	                || IsProperty(node)
-					|| IsNameSpace(node)
-					|| IsConstructor(node)
-					|| IsEvent(node)
-					|| IsDelegate(node)
-					|| IsIndexer(node)
-					|| IsEnum(node)
-					|| IsEnumMember(node)
-					|| IsStruct(node)
-					|| IsOperator(node)
+				|| IsRegionEnd(node) 
+                || IsClass(node)
+				|| IsInterface(node) 
+                || IsMethod(node) 
+                || IsField(node) 
+                || IsProperty(node)
+				|| IsNameSpace(node)
+				|| IsConstructor(node)
+				|| IsEvent(node)
+				|| IsDelegate(node)
+				|| IsIndexer(node)
+				|| IsEnum(node)
+				|| IsEnumMember(node)
+				|| IsStruct(node)
+				|| IsOperator(node)
 			);
         }
 
@@ -120,7 +121,7 @@ namespace CSharpBinding.OutlinePad
 
 		internal static void SetRegionStartInfos(CSharpOutlineNode node, AstNode dataNode)  {
             var preProcessorNode = (PreProcessorDirective)dataNode;
-			node.ElementName = "****** " + preProcessorNode.Argument + " *****";
+			node.Name 			 = "****** " + preProcessorNode.Argument + " *****";
 			node.ForegroundBrush = (regionHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
 //			node.Weight = regionHighLighting.FontWeight != null ? regionHighLighting.FontWeight.Value : FontWeights.Normal;          
         }
@@ -131,7 +132,7 @@ namespace CSharpBinding.OutlinePad
 
 		internal static void SetRegionEndInfos(CSharpOutlineNode node, AstNode dataNode)  {
             var preProcessorNode = (PreProcessorDirective)dataNode;
-			node.ElementName = "*********************";			
+			node.Name 			 = "*********************";			
 			node.ForegroundBrush = (regionHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
 //			node.Weight = regionHighLighting.FontWeight != null ? regionHighLighting.FontWeight.Value : FontWeights.Normal;          
         }
@@ -141,8 +142,8 @@ namespace CSharpBinding.OutlinePad
         }
 		
 		internal static void SetDelegateNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
-            var typeNode = (DelegateDeclaration)dataNode;
-			node.ElementName = typeNode.Name;
+            var typeNode 	= (DelegateDeclaration)dataNode;
+			node.Name 		= typeNode.Name;
 			if (colorizeNode)
 				node.ForegroundBrush = Brushes.Black;
 //			node.Weight = classHighLighting.FontWeight != null ? classHighLighting.FontWeight.Value : FontWeights.Normal;
@@ -168,12 +169,13 @@ namespace CSharpBinding.OutlinePad
         }
 		
 		internal static void SetStructNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
-            var typeNode = (TypeDeclaration)dataNode;
-			node.ElementName = typeNode.Name;
+            var typeNode 	= (TypeDeclaration)dataNode;
+			node.Name 		= typeNode.Name;
+			node.IsExpanded = true;
+			
 			if (colorizeNode)
 				node.ForegroundBrush = (classHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
 //			node.Weight = classHighLighting.FontWeight != null ? classHighLighting.FontWeight.Value : FontWeights.Normal;
-			node.IsExpanded = true;
 			
 			switch(GetAccessModifier(dataNode)) {
 				case Modifiers.Public:
@@ -196,8 +198,9 @@ namespace CSharpBinding.OutlinePad
         }
 		
 		internal static void SetEnumMemberNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
-            var enumMemberNode = (EnumMemberDeclaration)dataNode;
-			node.ElementName = enumMemberNode.Name;
+            var enumMemberNode 	= (EnumMemberDeclaration)dataNode;
+			node.Name 			= enumMemberNode.Name;
+			
 			if (colorizeNode)
 				node.ForegroundBrush = Brushes.Black;
 			node.IconName = "Icons.16x16.Enum";			      
@@ -208,12 +211,13 @@ namespace CSharpBinding.OutlinePad
         }
 		
 		internal static void SetEnumNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
-            var typeNode = (TypeDeclaration)dataNode;
-			node.ElementName = typeNode.Name;
-			if (colorizeNode)
-				node.ForegroundBrush = (classHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
+            var typeNode 	= (TypeDeclaration)dataNode;
+			node.Name 		= typeNode.Name;
 			node.IsExpanded = true;
 			
+			if (colorizeNode)
+				node.ForegroundBrush = (classHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
+						
 			switch(GetAccessModifier(dataNode)) {
 				case Modifiers.Public:
 					node.IconName = "Icons.16x16.Enum";
@@ -235,16 +239,17 @@ namespace CSharpBinding.OutlinePad
         }
 
 		internal static void SetClassNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
-            var typeNode = (TypeDeclaration)dataNode;
-			node.ElementName = typeNode.Name 
+            var typeNode 	= (TypeDeclaration)dataNode;
+			node.Name 		= typeNode.Name 
 								+ typeNode.LChevronToken 
 								+ GetTypeParameterDeclsAsString(typeNode.TypeParameters) 
 								+ typeNode.RChevronToken;
+			node.IsExpanded = true;
+			
 			if (colorizeNode)
 				node.ForegroundBrush = (classHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
 //			node.Weight = classHighLighting.FontWeight != null ? classHighLighting.FontWeight.Value : FontWeights.Normal;
-			node.IsExpanded = true;
-			
+						
 			switch(GetAccessModifier(dataNode)) {
 				case Modifiers.Public:
 					node.IconName = "Icons.16x16.Class";
@@ -266,11 +271,11 @@ namespace CSharpBinding.OutlinePad
         }
 
 		internal static void SetEventNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
-            var eventNode = (EventDeclaration)dataNode;
-			var varInitializer = eventNode.Children.FirstOrDefault(x => x is VariableInitializer) as VariableInitializer;
-			node.ElementName = (varInitializer != null) 
-									? varInitializer.Name 
-									: "<unknown>";
+            var eventNode 		= (EventDeclaration)dataNode;
+			var varInitializer 	= eventNode.Children.FirstOrDefault(x => x is VariableInitializer) as VariableInitializer;
+			node.Name 			= (varInitializer != null) 
+										? varInitializer.Name 
+										: "<unknown>";
 			if (colorizeNode)
 				node.ForegroundBrush = Brushes.Black;
 			
@@ -292,11 +297,13 @@ namespace CSharpBinding.OutlinePad
         }
 
 		internal static void SetInterfaceNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
-            var typeNode = (TypeDeclaration)dataNode;
-			node.ElementName = typeNode.Name;
+            var typeNode 	= (TypeDeclaration)dataNode;
+			node.Name 		= typeNode.Name;
+			node.IsExpanded = true;
+			
 			if (colorizeNode)
 				node.ForegroundBrush = (interfaceHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
-			node.IsExpanded = true;
+			
 			switch(GetAccessModifier(dataNode)) {
 				case Modifiers.Public:
 					node.IconName = "Icons.16x16.Interface";
@@ -318,18 +325,20 @@ namespace CSharpBinding.OutlinePad
         }
 
 		internal static void SetOperatorNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
-            var operatorNode = (OperatorDeclaration)dataNode;			
-            node.ElementName = operatorNode.OperatorToken 
-								+ " " + operatorNode.OperatorTypeToken;
-			
-			if (showExtendedInfos) {
-				node.ElementName += " " + operatorNode.LParToken
-										+ GetParameterDeclsAsString(operatorNode.Parameters)
-										+ operatorNode.RParToken;
-			}
+            var operatorNode 	= (OperatorDeclaration)dataNode;			
+            node.Name 			= operatorNode.OperatorToken 
+								+ " " 
+            					+ operatorNode.OperatorTypeToken;
+
 			if (colorizeNode)
 				node.ForegroundBrush = Brushes.Black;
-			
+            
+			if (showExtendedInfos) {
+				node.Name += " " 
+						   + operatorNode.LParToken
+						   + GetParameterDeclsAsString(operatorNode.Parameters)
+						   + operatorNode.RParToken;
+			}			
 			switch(GetAccessModifier(dataNode)) {
 				case Modifiers.Public:
 					node.IconName = "Icons.16x16.Method";
@@ -348,12 +357,13 @@ namespace CSharpBinding.OutlinePad
         }
 
 		internal static void SetMethodNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
-            var methodNode = (MethodDeclaration)dataNode;			
-            node.ElementName = methodNode.Name;
+            var methodNode 	= (MethodDeclaration)dataNode;			
+            node.Name 		= methodNode.Name;
 					
-			node.ElementName += " " + methodNode.LParToken 
-									+ (showExtendedInfos ? GetParameterDeclsAsString(methodNode.Parameters) : "")
-									+ methodNode.RParToken;
+			node.Name += " " 
+					   + methodNode.LParToken
+					   + (showExtendedInfos ? GetParameterDeclsAsString(methodNode.Parameters) : "")
+					   + methodNode.RParToken;
 
 			if (colorizeNode)
 				node.ForegroundBrush = (methodHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
@@ -390,7 +400,8 @@ namespace CSharpBinding.OutlinePad
                 current++;
             }
 
-            node.ElementName = fieldName.ToString();
+            node.Name = fieldName.ToString();
+            
 			if (colorizeNode)
 				node.ForegroundBrush = Brushes.Black;
 
@@ -413,15 +424,17 @@ namespace CSharpBinding.OutlinePad
 		
 		internal static void SetPropertyNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
             var propertyNode = (PropertyDeclaration)dataNode;
-			node.ElementName = propertyNode.Name;
+			node.Name 		 = propertyNode.Name;
+			
 			if (colorizeNode)
 				node.ForegroundBrush = Brushes.Black;
+			
 			if (showExtendedInfos) {
-				node.ElementName += " " + propertyNode.LBraceToken 
-								  + " " + propertyNode.Getter.Keyword + (!string.IsNullOrEmpty(propertyNode.Getter.Keyword.ToString()) ? ";" : "")
-								  + " " + propertyNode.Setter.Keyword + (!string.IsNullOrEmpty(propertyNode.Setter.Keyword.ToString()) ? ";" : "")
-								  + " " + propertyNode.RBraceToken;
-			}
+				node.Name += " " + propertyNode.LBraceToken 
+						   + " " + propertyNode.Getter.Keyword + (!string.IsNullOrEmpty(propertyNode.Getter.Keyword.ToString()) ? ";" : "")
+						   + " " + propertyNode.Setter.Keyword + (!string.IsNullOrEmpty(propertyNode.Setter.Keyword.ToString()) ? ";" : "")
+						   + " " + propertyNode.RBraceToken;
+			}						
 			switch(GetAccessModifier(dataNode)) {
 				case Modifiers.Public:
 					node.IconName = "Icons.16x16.Property";
@@ -441,17 +454,20 @@ namespace CSharpBinding.OutlinePad
 		
 		internal static void SetIndexerNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
             var indexerNode = (IndexerDeclaration)dataNode;
-			node.ElementName = indexerNode.ReturnType.ToString() + " " 	+ indexerNode.ThisToken.ToString() 
-																		+ indexerNode.LBracketToken
-																		+ GetParameterDeclsAsString(indexerNode.Parameters)
-																		+ indexerNode.RBracketToken;
+			node.Name 		= indexerNode.ReturnType.ToString() 
+						    + " " 
+						    + indexerNode.ThisToken.ToString()
+						    + indexerNode.LBracketToken
+						    + GetParameterDeclsAsString(indexerNode.Parameters)
+						    + indexerNode.RBracketToken;		
 			if (colorizeNode)
 				node.ForegroundBrush = Brushes.Black;
+			
 			if (showExtendedInfos) {
-				node.ElementName += " " + indexerNode.LBraceToken 
-								  + " " + indexerNode.Getter.Keyword + (!string.IsNullOrEmpty(indexerNode.Getter.Keyword.ToString()) ? ";" : "")
-								  + " " + indexerNode.Setter.Keyword + (!string.IsNullOrEmpty(indexerNode.Setter.Keyword.ToString()) ? ";" : "")
-								  + " " + indexerNode.RBraceToken;
+				node.Name += " " + indexerNode.LBraceToken 
+						   + " " + indexerNode.Getter.Keyword + (!string.IsNullOrEmpty(indexerNode.Getter.Keyword.ToString()) ? ";" : "")
+						   + " " + indexerNode.Setter.Keyword + (!string.IsNullOrEmpty(indexerNode.Setter.Keyword.ToString()) ? ";" : "")
+						   + " " + indexerNode.RBraceToken;
 			}
 			switch(GetAccessModifier(dataNode)) {
 				case Modifiers.Public:
@@ -471,10 +487,11 @@ namespace CSharpBinding.OutlinePad
         }
 		
 		internal static void SetNameSpaceNodeInfos(CSharpOutlineNode node, AstNode dataNode) {            
-            var nameSpaceNode = (NamespaceDeclaration)dataNode;
-			node.ElementName = nameSpaceNode.Name;
-			node.IconName = "Icons.16x16.NameSpace";  
-			node.IsExpanded = true;
+            var nameSpaceNode 	= (NamespaceDeclaration)dataNode;
+			node.Name 			= nameSpaceNode.Name;
+			node.IconName 		= "Icons.16x16.NameSpace";  
+			node.IsExpanded 	= true;
+			
 			if (colorizeNode)
 				node.ForegroundBrush = (nameSpaceHighLighting.Foreground as SimpleHighlightingBrush).GetBrush(null);
 //			node.Weight = nameSpaceHighLighting.FontWeight != null ? nameSpaceHighLighting.FontWeight.Value : FontWeights.Normal;		      
@@ -486,14 +503,15 @@ namespace CSharpBinding.OutlinePad
 		
 		internal static void SetConstructorNodeInfos(CSharpOutlineNode node, AstNode dataNode) {
             var constructorNode = (ConstructorDeclaration)dataNode;
-            node.ElementName = constructorNode.Name;
+            node.Name 			= constructorNode.Name;
+            
 			if (colorizeNode)
 				node.ForegroundBrush = Brushes.Black;
 
-			node.ElementName +=	" " 
-								+ constructorNode.LParToken 
-								+ (showExtendedInfos ? GetParameterDeclsAsString(constructorNode.Parameters) : "")
-								+ constructorNode.RParToken;
+			node.Name += " " 
+					   + constructorNode.LParToken 
+					   + (showExtendedInfos ? GetParameterDeclsAsString(constructorNode.Parameters) : "")
+					   + constructorNode.RParToken;
 
 			switch(GetAccessModifier(dataNode)) {
 				case Modifiers.Public:
@@ -513,10 +531,11 @@ namespace CSharpBinding.OutlinePad
         }
 		
 		internal static void SetDocumentNodeInfos(CSharpOutlineNode node, AstNode dataNode) {            
-			node.ElementName = Path.GetFileName(((SyntaxTree)dataNode).FileName);
-			node.IconName = "C#.File.FullFile";    
+			node.Name 		= Path.GetFileName(((SyntaxTree)dataNode).FileName);
+			node.IconName 	= "C#.File.FullFile";    
 			node.IsExpanded = true;  
-			node.Weight = FontWeights.Bold;
+			node.Weight 	= FontWeights.Bold;
+			
 			if (colorizeNode)
 				node.ForegroundBrush = Brushes.Black;
         }

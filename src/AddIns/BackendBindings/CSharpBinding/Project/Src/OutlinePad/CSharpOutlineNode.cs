@@ -25,33 +25,25 @@ using ICSharpCode.SharpDevelop;
 using ICSharpCode.SharpDevelop.Editor;
 using ICSharpCode.TreeView;
 using ICSharpCode.NRefactory.CSharp;
-using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.Core.Presentation;
 using System.Windows.Controls;
-using ICSharpCode.AvalonEdit.Folding;
 
 namespace CSharpBinding.OutlinePad
 {
 	class CSharpOutlineNode : SharpTreeNode
 	{
-		string elementName, name, iconName;
-		
-		public string ElementName {
-			get { return elementName; }
-			set {
-				this.elementName = value;
-				this.RaisePropertyChanged("Text");
-			}
-		}
+		string name, iconName;
 		
 		public string Name {
 			get { return name; }
 			set {
-				this.name = value;
-				this.RaisePropertyChanged("Text");
+				if (this.name != value) {
+					this.name = value;
+					this.RaisePropertyChanged("Text");
+				}
 			}
 		}
-		
+				
 		public override object ToolTip {
 			get { return this.GetSourceText(); }
 		}
@@ -65,14 +57,16 @@ namespace CSharpBinding.OutlinePad
 		public string IconName {
 			get { return iconName; }
 			set {
-				iconName = value;
-				this.RaisePropertyChanged("Icon");
+				if (iconName != value) {
+					iconName = value;
+					this.RaisePropertyChanged("Icon");
+				}
 			}
 		}
 		
 		public string GetSourceText() {
 			if (StartMarker.IsDeleted || EndMarker.IsDeleted)
-				return "";
+				return string.Empty;
 			
 			return Editor.Document.GetText(StartMarker.Offset, EndMarker.Offset - StartMarker.Offset);
 		}
@@ -97,7 +91,7 @@ namespace CSharpBinding.OutlinePad
 		}
 		
 		public override object Text {
-			get { return (!string.IsNullOrEmpty(Name) ? ElementName + " (" + Name + ")" : ElementName); }
+			get { return Name; }
 		}
 		
 		public override object Icon {
@@ -127,18 +121,23 @@ namespace CSharpBinding.OutlinePad
 				return weight;
 			}
 			set {
-				weight = value;
-				RaisePropertyChanged("FontWeight");
+				if (weight != value) {
+					weight = value;
+					RaisePropertyChanged("FontWeight");
+				}
 			}
 		}
+		
 		FontStyle style = FontStyles.Normal;
 		public FontStyle Style {
 			get {
 				return style;
 			}
 			set {
-				style = value;
-				RaisePropertyChanged("FontStyle");
+				if (style != value) {
+					style = value;
+					RaisePropertyChanged("FontStyle");
+				}
 			}
 		}
 		
@@ -160,6 +159,7 @@ namespace CSharpBinding.OutlinePad
 			if (cmd.CanExecute(this))
 				cmd.Execute(this);
 		}
+		
 		protected override void OnCollapsing() {
 			var cmd =  new HandleFoldingCommand();
 			if (cmd.CanExecute(this))
