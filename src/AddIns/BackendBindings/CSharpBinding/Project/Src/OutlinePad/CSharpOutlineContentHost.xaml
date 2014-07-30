@@ -9,5 +9,5 @@
 		AllowDropOrder="True"
 		MouseDoubleClick="TreeViewMouseDoubleClick"
 		MouseLeftButtonUp="TreeView_MouseLeftButtonUp"
-			/>
+	/>
 </DockPanel>
