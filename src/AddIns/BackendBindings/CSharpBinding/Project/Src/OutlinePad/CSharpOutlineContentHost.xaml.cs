@@ -278,6 +278,8 @@ namespace CSharpBinding.OutlinePad
 			var node = treeView.SelectedItem as CSharpOutlineNode;
 			if (node == null)
 				return;
+			if (node.StartMarker.IsDeleted)
+				return;
 			
 			if (optionSelectRange)
 				editor.Select(node.StartMarker.Offset, node.EndMarker.Offset - node.StartMarker.Offset);			

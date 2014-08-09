@@ -60,8 +60,11 @@ namespace ICSharpCode.XamlBinding
 		public TextLocation StartLocation { get; set; }
 		public TextLocation EndLocation { get; set; }
 		
-		public string GetMarkupText()
+		public string GetSourceText()
 		{
+			if (StartMarker.IsDeleted || EndMarker.IsDeleted)
+				return string.Empty;
+			
 			return Editor.Document.GetText(StartMarker.Offset, EndMarker.Offset - StartMarker.Offset);
 		}
 		
@@ -69,7 +72,7 @@ namespace ICSharpCode.XamlBinding
 		{
 			string[] data = nodes
 				.OfType<XamlOutlineNode>()
-				.Select(item => item.GetMarkupText())
+				.Select(item => item.GetSourceText())
 				.ToArray();
 			var dataObject = new DataObject();
 			dataObject.SetData(typeof(string[]), data);
@@ -105,13 +108,6 @@ namespace ICSharpCode.XamlBinding
 //			}
 //		}
 		
-		public string GetSourceText() {
-			if (StartMarker.IsDeleted || EndMarker.IsDeleted)
-				return string.Empty;
-			
-			return Editor.Document.GetText(StartMarker.Offset, EndMarker.Offset - StartMarker.Offset);
-		}
-		
 		public override bool CanDelete(SharpTreeNode[] nodes)
 		{
 			return nodes.OfType<XamlOutlineNode>().All(n => n.Parent != null);
@@ -140,6 +136,19 @@ namespace ICSharpCode.XamlBinding
 		
 		public override object Icon {
 			get { return SD.ResourceService.GetImageSource("Icons.16x16.HtmlElements.Element"); }
+		}
+		
+		FontWeight weight = FontWeights.Normal;
+		public FontWeight Weight {
+			get {
+				return weight;
+			}
+			set {
+				if (weight != value) {
+					weight = value;
+					RaisePropertyChanged("FontWeight");
+				}
+			}
 		}
 	}
 }

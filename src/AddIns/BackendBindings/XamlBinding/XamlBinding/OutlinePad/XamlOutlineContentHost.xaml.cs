@@ -19,6 +19,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -150,9 +151,10 @@ namespace ICSharpCode.XamlBinding
 		{
 			if (treeView.Root == null) {
 				treeView.Root = new XamlOutlineNode {
-					ElementName = "Document Root",
-					Name = Path.GetFileName(editor.FileName),
-					Editor = editor
+					ElementName = Path.GetFileName(editor.FileName),
+					Name = string.Empty,
+					Editor = editor,
+					Weight = FontWeights.Bold
 				};
 			}
 			
@@ -216,6 +218,8 @@ namespace ICSharpCode.XamlBinding
 		{
 			var node = treeView.SelectedItem as XamlOutlineNode;
 			if (node == null)
+				return;
+			if (node.StartMarker.IsDeleted)
 				return;
 			
 			if (optionSelectRange)
