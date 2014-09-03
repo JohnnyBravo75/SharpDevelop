@@ -7,7 +7,7 @@
  * To change this template use Tools | Options | Coding | Edit Standard Headers.
  */
 using System;
-using System.Windows;
+using System.Windows.Controls;
 using ICSharpCode.Reporting.Globals;
 using Xceed.Wpf.Toolkit;
 using ICSharpCode.Reporting.Addin.ReportWizard.ViewModels;
@@ -25,10 +25,11 @@ namespace ICSharpCode.Reporting.Addin.ReportWizard.Dialog{
 		{
 			InitializeComponent();
 			_DataModel.SelectedItem = PushPullModel.FormSheet;
-			_ReportType.SelectedItem = ReportType.FormSheet;
-			this.context = new PageOneContext(); 
+			_ReportType.SelectedItem = ReportType.FormSheet;	
+			_Legal.IsChecked = true;
+			this.context = new PageOneContext();
 		}
-		
+    
 		
 		public IWizardContext Context {
 			get{
@@ -36,21 +37,48 @@ namespace ICSharpCode.Reporting.Addin.ReportWizard.Dialog{
 				return context;}
 		}
 		
-		public int PageNumber {
-			get {return 1;}
+		public WizardPageType ReportPageType {
+			get {return WizardPageType.BaseSettingsPage;}
 		}
 		
 		
-		void UpdateContext()
-		{
-
+		void UpdateContext(){
 			context.DataModel = (PushPullModel) _DataModel.SelectedItem;
 			context.ReportType = (ReportType) _ReportType.SelectedItem;
 			context.ReportName = this._ReportName.Text;
 			context.FileName = this._Filename.Text;
 			context.Legal = _Legal.IsChecked == true;
-			;
 			context.Landscape = _Landscape.IsChecked == true;
+		}
+		
+		
+		void _DataModel_SelectionChanged(object sender, SelectionChangedEventArgs e){
+			var cbo = (ComboBox) sender;
+			
+			var pushPullModel = (PushPullModel)cbo.SelectedItem;
+			
+			switch (pushPullModel) {
+					case PushPullModel.PushData: {
+						this._ReportType.SelectedItem = ReportType.DataReport;
+						this.CanFinish = false;
+						this.CanSelectNextPage = true;
+						break;
+					}
+					
+					case PushPullModel.PullData: {
+						CanSelectNextPage = true;
+						this.CanFinish = false;
+						break;
+					}
+					
+					case PushPullModel.FormSheet: {
+						this.CanFinish = true;
+						CanSelectNextPage = false;
+						this._ReportType.SelectedItem = ReportType.FormSheet;
+						break;
+					}
+			}
+			
 		}
 	}
 }

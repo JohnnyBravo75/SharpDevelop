@@ -8,7 +8,9 @@
  */
 using System;
 using System.Windows;
+using ICSharpCode.Reporting.Globals;
 using Xceed.Wpf.Toolkit;
+using ICSharpCode.Reporting.Addin.ReportWizard.Dialog;
 using ICSharpCode.Reporting.Addin.ReportWizard.ViewModels;
 using System.Linq;
 
@@ -20,32 +22,70 @@ namespace ICSharpCode.Reporting.Addin.ReportWizard.Dialog
 	public partial class ReportWizard : Window
 	{
 		readonly ReportWizardContext context;
-		readonly BaseSettingsPage baseSettingsPage;
-		
 		public ReportWizard(ReportWizardContext context)
 		{
 			InitializeComponent();
 			this.context = context;
-			baseSettingsPage = new BaseSettingsPage();
-			_wizard.Items.Insert(1,baseSettingsPage);
+		}
+		
+	
+		void _wizard_Finish(object sender, RoutedEventArgs e)
+		{
+			foreach (WizardPage element in _wizard.Items) {
+				var hc = element as IHasContext;
+				if (hc != null) {
+					UpdateContext(hc);
+				}
+			}
+		}
+  
+		
+		void UpdateContext(IHasContext hc)
+		{
+			switch (hc.ReportPageType) {
+					case WizardPageType.BaseSettingsPage:{
+						context.PageOneContext = hc.Context;
+						break;
+					}
+					
+					case WizardPageType.PushModelPage: {
+						context.PushModelContext = hc.Context;
+						break;
+					}
+			}
 		}
 		
 		
 		void _wizard_Next(object sender, Xceed.Wpf.Toolkit.Core.CancelRoutedEventArgs e)
 		{
+			var current = this._wizard.CurrentPage;
+			if (current.Name.Equals("BaseSettings")) {
+				var hasContext = current as IHasContext;
+				if (hasContext != null) {
+					var pushPullModel = ((PageOneContext)hasContext.Context).DataModel;
+					switch (pushPullModel) {
+							case PushPullModel.PushData: {
+								current.NextPage = (WizardPage)_wizard.Items[2];
+								break;
+							}
+							
+							case PushPullModel.PullData: {
+								current.NextPage = (WizardPage)_wizard.Items[3];
+								break;
+							}
+							
+							case PushPullModel.FormSheet: {
+								break;
+							}
+					}
+				}
+			}
 		}
-	
+		
 		
 		void _wizard_PageChanged(object sender, RoutedEventArgs e)
 		{
-	
+			var x = _wizard.CurrentPage;
 		}
-	
-		void _wizard_Finish(object sender, RoutedEventArgs e)
-		{
-			context.PageOneContext = baseSettingsPage.Context;
-		
-		}
-		
 	}
 }
